@@ -1,0 +1,32 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 40px;
+}
+
+form {
+  margin: 0 auto;
+  width: 300px;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
+#progress-container {
+  width: 100%;
+  background: #eee;
+  height: 20px;
+  margin-top: 20px;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background: #4caf50;
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Conversor TTS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Conversor TTS</h1>
+  <form id="convert-form" enctype="multipart/form-data">
+    <input type="file" name="archivo" required><br>
+    <label>Idioma:</label>
+    <select name="idioma">
+      <option value="castellano">Castellano</option>
+      <option value="catalan">Catalán</option>
+    </select><br>
+    <label>Género:</label>
+    <select name="genero">
+      <option value="femenina">Femenina</option>
+      <option value="masculina">Masculina</option>
+    </select><br>
+    <label>Velocidad:</label>
+    <select name="velocidad">
+      <option value="lenta">Lenta</option>
+      <option value="normal" selected>Normal</option>
+      <option value="rapida">Rápida</option>
+    </select><br>
+    <label>Carpeta de salida:</label>
+    <input type="text" name="carpeta" placeholder="salida"><br>
+    <button type="submit">Convertir</button>
+  </form>
+  <div id="progress-container" class="hidden">
+    <div id="progress-bar"></div>
+  </div>
+  <script>
+  const form = document.getElementById('convert-form');
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const data = new FormData(form);
+    const file = form.querySelector('input[type=file]').files[0];
+    const est = Math.max(5, file.size / 50000); // segundos estimados
+    const bar = document.getElementById('progress-bar');
+    const container = document.getElementById('progress-container');
+    container.classList.remove('hidden');
+    let start = Date.now();
+    const duration = est * 1000;
+    function animate(){
+      const now = Date.now();
+      const pct = Math.min(100, ((now-start)/duration)*100);
+      bar.style.width = pct + '%';
+      if(pct < 100){ requestAnimationFrame(animate); }
+    }
+    animate();
+    const resp = await fetch('/convert', {method:'POST', body:data});
+    const html = await resp.text();
+    document.open();
+    document.write(html);
+    document.close();
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Conversión exitosa</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Conversión finalizada</h1>
+  <p>Archivos guardados en {{ carpeta }}</p>
+  <ul>
+  {% for archivo in archivos %}
+    <li>{{ archivo }}</li>
+  {% endfor %}
+  </ul>
+</body>
+</html>
