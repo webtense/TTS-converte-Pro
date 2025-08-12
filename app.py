@@ -1,8 +1,14 @@
 import asyncio
 import os
 from pathlib import Path
-from flask import Flask, render_template, request
-from werkzeug.utils import secure_filename
+
+try:
+    from flask import Flask, render_template, request
+    from werkzeug.utils import secure_filename
+except ModuleNotFoundError as exc:  # pragma: no cover - helpful runtime hint
+    raise SystemExit(
+        "Flask no está instalado. Ejecuta 'pip install -r requirements.txt'"
+    ) from exc
 
 from tts import read_txt, read_docx, read_doc, synthesize_book
 
