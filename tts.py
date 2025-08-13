@@ -8,8 +8,9 @@ from docx import Document
 from pydub import AudioSegment
 import textract
 
-CHUNK_LINES = 200
-CHUNK_DELAY = 1
+
+DEFAULT_CHUNK_LINES = 200
+DEFAULT_CHUNK_DELAY = 1
 
 
 def read_txt(path: str) -> str:
@@ -41,16 +42,26 @@ def split_into_chapters(text: str) -> List[Tuple[str, str]]:
     return chapters
 
 
-async def synthesize(text: str, voice: str, rate: str, output_path: str) -> None:
+async def synthesize(
+    text: str,
+    voice: str,
+    rate: str,
+    output_path: str,
+    chunk_lines: int = DEFAULT_CHUNK_LINES,
+    chunk_delay: float = DEFAULT_CHUNK_DELAY,
+) -> None:
     lines = text.splitlines()
-    chunks = ["\n".join(lines[i : i + CHUNK_LINES]) for i in range(0, len(lines), CHUNK_LINES)]
+    chunks = [
+        "\n".join(lines[i : i + chunk_lines])
+        for i in range(0, len(lines), chunk_lines)
+    ]
     temp_files = []
     for idx, chunk in enumerate(chunks):
         communicate = edge_tts.Communicate(chunk, voice=voice, rate=rate)
         tmp_file = f"{output_path}_tmp_{idx}.mp3"
         await communicate.save(tmp_file)
         temp_files.append(tmp_file)
-        await asyncio.sleep(CHUNK_DELAY)
+        await asyncio.sleep(chunk_delay)
     audio = AudioSegment.empty()
     for f in temp_files:
         audio += AudioSegment.from_file(f)
@@ -58,12 +69,27 @@ async def synthesize(text: str, voice: str, rate: str, output_path: str) -> None
     audio.export(output_path, format="mp3")
 
 
-async def synthesize_book(text: str, voice: str, rate: str, out_dir: str, book_name: str) -> List[str]:
+async def synthesize_book(
+    text: str,
+    voice: str,
+    rate: str,
+    out_dir: str,
+    book_name: str,
+    chunk_lines: int = DEFAULT_CHUNK_LINES,
+    chunk_delay: float = DEFAULT_CHUNK_DELAY,
+) -> List[str]:
     os.makedirs(out_dir, exist_ok=True)
     chapters = split_into_chapters(text)
     files = []
     for i, (_, chapter_text) in enumerate(chapters, start=1):
         filename = os.path.join(out_dir, f"{book_name}_capitulo_{i}.mp3")
-        await synthesize(chapter_text, voice, rate, filename)
+        await synthesize(
+            chapter_text,
+            voice,
+            rate,
+            filename,
+            chunk_lines=chunk_lines,
+            chunk_delay=chunk_delay,
+        )
         files.append(filename)
     return files
