@@ -2,4 +2,4 @@ Flask>=2.2
 python-docx>=0.8
 edge-tts>=6.1
 pydub>=0.25
-textract>=1.6
+
