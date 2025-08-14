@@ -1,17 +1,71 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #6dd5fa, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.card {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 320px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+input[type=file],
+input[type=number],
+input[type=text],
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type=range] {
+  width: 100%;
+}
+
+button,
+.btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
   text-align: center;
-  margin: 40px;
 }
 
-form {
-  margin: 0 auto;
-  width: 300px;
+button:hover,
+.btn:hover {
+  background: #45a049;
 }
 
-button {
-  padding: 10px 20px;
-  margin-top: 10px;
+.folder-picker {
+  display: flex;
+  gap: 5px;
+}
+
+.folder-picker input[type=text] {
+  flex: 1;
 }
 
 #progress-container {
@@ -19,6 +73,8 @@ button {
   background: #eee;
   height: 20px;
   margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 #progress-bar {
@@ -29,4 +85,9 @@ button {
 
 .hidden {
   display: none;
+}
+
+ul {
+  text-align: left;
+  padding-left: 20px;
 }

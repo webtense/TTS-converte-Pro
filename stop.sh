@@ -1,4 +1,11 @@
 #!/bin/bash
+<<<<<<< HEAD
+if [ -f app.pid ]; then
+  kill $(cat app.pid) && rm app.pid
+else
+  pkill -f app.py || true
+fi
+=======
 # stop.sh
 # Detiene el servidor Flask iniciado con start.sh
 
@@ -25,3 +32,4 @@ else
 fi
 
 echo "==================================="
+>>>>>>> origin/main

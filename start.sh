@@ -1,4 +1,10 @@
 #!/bin/bash
+<<<<<<< HEAD
+set -e
+pip install -r requirements.txt
+python app.py &
+echo $! > app.pid
+=======
 # start.sh
 # Arranca el proyecto Flask TTS-converte-Pro
 
@@ -52,3 +58,4 @@ echo "==================================="
 echo " Proyecto lanzado."
 echo " Para detenerlo: kill \$(cat flask.pid)"
 echo "==================================="
+>>>>>>> origin/main

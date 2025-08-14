@@ -6,6 +6,54 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+<<<<<<< HEAD
+  <div class="card">
+    <h1>Conversor TTS</h1>
+    <form id="convert-form" enctype="multipart/form-data">
+      <label>Archivo:
+        <input type="file" name="archivo" required>
+      </label>
+      <label>Idioma:
+        <select name="idioma">
+          <option value="castellano">Castellano</option>
+          <option value="catalan">Catalán</option>
+        </select>
+      </label>
+      <label>Género:
+        <select name="genero">
+          <option value="femenina">Femenina</option>
+          <option value="masculina">Masculina</option>
+        </select>
+      </label>
+      <label>Velocidad:
+        <select name="velocidad">
+          <option value="lenta">Lenta</option>
+          <option value="normal" selected>Normal</option>
+          <option value="rapida">Rápida</option>
+        </select>
+      </label>
+      <label>Pitch:
+        <input type="range" name="pitch" id="pitch" min="-20" max="20" value="0">
+        <span id="pitch-val">0</span>
+      </label>
+      <label>Líneas por bloque:
+        <input type="number" name="lineas" value="200" min="1">
+      </label>
+      <label>Pausa entre bloques (s):
+        <input type="number" step="0.1" name="pausa" value="1">
+      </label>
+      <label>Carpeta de salida:</label>
+      <div class="folder-picker">
+        <input type="text" id="carpeta" name="carpeta" placeholder="salida" readonly>
+        <button type="button" id="carpetaBtn">Elegir</button>
+        <input type="file" id="carpetaInput" webkitdirectory directory style="display:none">
+      </div>
+      <button type="submit" class="btn">Convertir</button>
+    </form>
+    <div id="progress-container" class="hidden">
+      <div id="progress-bar"></div>
+    </div>
+=======
   <h1>Conversor TTS</h1>
   <form id="convert-form" enctype="multipart/form-data">
     <input type="file" name="archivo" required><br>
@@ -35,9 +83,25 @@
   </form>
   <div id="progress-container" class="hidden">
     <div id="progress-bar"></div>
+>>>>>>> origin/main
   </div>
   <script>
   const form = document.getElementById('convert-form');
+  const pitch = document.getElementById('pitch');
+  const pitchVal = document.getElementById('pitch-val');
+  pitch.addEventListener('input', ()=>{ pitchVal.textContent = pitch.value; });
+
+  const carpetaBtn = document.getElementById('carpetaBtn');
+  const carpetaInput = document.getElementById('carpetaInput');
+  const carpetaText = document.getElementById('carpeta');
+  carpetaBtn.addEventListener('click', ()=>carpetaInput.click());
+  carpetaInput.addEventListener('change', (e)=>{
+    if(carpetaInput.files.length>0){
+      const path = carpetaInput.files[0].webkitRelativePath.split('/')[0];
+      carpetaText.value = path;
+    }
+  });
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const data = new FormData(form);

@@ -6,12 +6,15 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1>Conversión finalizada</h1>
-  <p>Archivos guardados en {{ carpeta }}</p>
-  <ul>
-  {% for archivo in archivos %}
-    <li>{{ archivo }}</li>
-  {% endfor %}
-  </ul>
+  <div class="card">
+    <h1>Conversión finalizada</h1>
+    <p>Archivos guardados en {{ carpeta }}</p>
+    <ul>
+    {% for archivo in archivos %}
+      <li>{{ archivo }}</li>
+    {% endfor %}
+    </ul>
+    <a href="/" class="btn">Volver</a>
+  </div>
 </body>
 </html>

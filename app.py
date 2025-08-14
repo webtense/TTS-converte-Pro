@@ -40,6 +40,8 @@ def convert():
     idioma = request.form.get("idioma")
     genero = request.form.get("genero")
     velocidad = request.form.get("velocidad")
+    pitch_val = request.form.get("pitch", type=int) or 0
+    pitch = f"{pitch_val:+d}%"
     carpeta = request.form.get("carpeta") or "salida"
     lineas = request.form.get("lineas", type=int) or DEFAULT_CHUNK_LINES
     pausa = request.form.get("pausa", type=float) or DEFAULT_CHUNK_DELAY
@@ -73,6 +75,10 @@ def convert():
             book_name,
             chunk_lines=lineas,
             chunk_delay=pausa,
+<<<<<<< HEAD
+            pitch=pitch,
+=======
+>>>>>>> origin/main
         )
     )
     loop.close()
