@@ -4,7 +4,14 @@ from pathlib import Path
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
-from tts import read_txt, read_docx, read_doc, synthesize_book
+from tts import (
+    DEFAULT_CHUNK_DELAY,
+    DEFAULT_CHUNK_LINES,
+    read_doc,
+    read_docx,
+    read_txt,
+    synthesize_book,
+)
 
 app = Flask(__name__)
 
@@ -33,7 +40,11 @@ def convert():
     idioma = request.form.get("idioma")
     genero = request.form.get("genero")
     velocidad = request.form.get("velocidad")
+    pitch_val = request.form.get("pitch", type=int) or 0
+    pitch = f"{pitch_val:+d}%"
     carpeta = request.form.get("carpeta") or "salida"
+    lineas = request.form.get("lineas", type=int) or DEFAULT_CHUNK_LINES
+    pausa = request.form.get("pausa", type=float) or DEFAULT_CHUNK_DELAY
 
     book_name = Path(file.filename).stem
     filename = secure_filename(file.filename)
@@ -56,7 +67,16 @@ def convert():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     files = loop.run_until_complete(
-        synthesize_book(text, voice, rate, carpeta, book_name)
+        synthesize_book(
+            text,
+            voice,
+            rate,
+            carpeta,
+            book_name,
+            chunk_lines=lineas,
+            chunk_delay=pausa,
+            pitch=pitch,
+        )
     )
     loop.close()
 
