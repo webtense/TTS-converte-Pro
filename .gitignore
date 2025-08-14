@@ -1,0 +1,17 @@
+# Entorno virtual / Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Entorno/secretos locales
+.env
+flask.pid
+
+# Generados por la app
+static/qrs/
+static/uploads/
+
+# IDEs
+.vscode/
+.idea/
