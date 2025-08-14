@@ -10,7 +10,10 @@
     <h1>Conversor TTS</h1>
     <form id="convert-form" enctype="multipart/form-data">
       <label>Archivo:
-        <input type="file" name="archivo" required>
+        <input type="file" name="archivo" id="archivo" required>
+      </label>
+      <label>Nombre base de salida:
+        <input type="text" name="nombre" id="nombre" placeholder="MiAudiolibro">
       </label>
       <label>Idioma:
         <select name="idioma">
@@ -55,9 +58,16 @@
   </div>
   <script>
   const form = document.getElementById('convert-form');
+  const fileInput = document.getElementById('archivo');
+  const nombreInput = document.getElementById('nombre');
   const pitch = document.getElementById('pitch');
   const pitchVal = document.getElementById('pitch-val');
   pitch.addEventListener('input', ()=>{ pitchVal.textContent = pitch.value; });
+
+  fileInput.addEventListener('change', ()=>{
+    const name = fileInput.files[0]?.name.replace(/\.[^/.]+$/, '') || '';
+    nombreInput.value = name;
+  });
 
   const carpetaBtn = document.getElementById('carpetaBtn');
   const carpetaInput = document.getElementById('carpetaInput');

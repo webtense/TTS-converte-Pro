@@ -44,7 +44,7 @@ async def synthesize(
     output_path: str,
     chunk_lines: int = DEFAULT_CHUNK_LINES,
     chunk_delay: float = DEFAULT_CHUNK_DELAY,
-    pitch: str = "0%",
+    pitch: str = "+0%",
 ) -> None:
     lines = text.splitlines()
     chunks = [
@@ -73,7 +73,7 @@ async def synthesize_book(
     book_name: str,
     chunk_lines: int = DEFAULT_CHUNK_LINES,
     chunk_delay: float = DEFAULT_CHUNK_DELAY,
-    pitch: str = "0%",
+    pitch: str = "+0%",
 ) -> List[str]:
     os.makedirs(out_dir, exist_ok=True)
     chapters = split_into_chapters(text)

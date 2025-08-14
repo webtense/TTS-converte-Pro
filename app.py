@@ -25,7 +25,7 @@ VOICE_MAP = {
     },
 }
 
-SPEED_MAP = {"lenta": "-25%", "normal": "0%", "rapida": "+25%"}
+SPEED_MAP = {"lenta": "-25%", "normal": "+0%", "rapida": "+25%"}
 
 
 @app.route("/")
@@ -44,8 +44,8 @@ def convert():
     carpeta = request.form.get("carpeta") or "salida"
     lineas = request.form.get("lineas", type=int) or DEFAULT_CHUNK_LINES
     pausa = request.form.get("pausa", type=float) or DEFAULT_CHUNK_DELAY
-
-    book_name = Path(file.filename).stem
+    nombre = request.form.get("nombre") or Path(file.filename).stem
+    book_name = secure_filename(nombre)
     filename = secure_filename(file.filename)
     upload_path = os.path.join("uploads", filename)
     os.makedirs("uploads", exist_ok=True)
@@ -59,7 +59,7 @@ def convert():
         return "Formato no soportado", 400
 
     voice = VOICE_MAP.get(idioma, VOICE_MAP["castellano"])[genero]
-    rate = SPEED_MAP.get(velocidad, "0%")
+    rate = SPEED_MAP.get(velocidad, "+0%")
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -77,7 +77,8 @@ def convert():
     )
     loop.close()
 
-    return render_template("exito.html", archivos=files, carpeta=carpeta)
+    display_files = [os.path.join(carpeta, os.path.basename(f)) for f in files]
+    return render_template("exito.html", archivos=display_files, carpeta=carpeta)
 
 
 if __name__ == "__main__":

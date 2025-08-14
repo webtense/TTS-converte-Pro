@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #6dd5fa, #ffffff);
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,10 +12,10 @@ body {
 
 .card {
   background: #fff;
-  padding: 20px 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  width: 320px;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 380px;
 }
 
 label {
@@ -39,24 +41,56 @@ input[type=range] {
   width: 100%;
 }
 
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  background: #667eea;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background: #ddd;
+  height: 4px;
+  border-radius: 4px;
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #667eea;
+  border: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type=range]::-moz-range-track {
+  background: #ddd;
+  height: 4px;
+  border-radius: 4px;
+}
+
 button,
 .btn {
   width: 100%;
-  padding: 10px;
-  margin-top: 15px;
-  background: #4caf50;
+  padding: 12px;
+  margin-top: 20px;
+  background: #667eea;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  transition: background 0.2s ease-in-out;
 }
 
 button:hover,
 .btn:hover {
-  background: #45a049;
+  background: #5563c1;
 }
 
 .folder-picker {
@@ -80,7 +114,8 @@ button:hover,
 #progress-bar {
   height: 100%;
   width: 0;
-  background: #4caf50;
+  background: linear-gradient(90deg, #667eea, #64b3f4);
+  transition: width 0.2s;
 }
 
 .hidden {

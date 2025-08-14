@@ -1,6 +1,6 @@
 # TTS-converte-Pro
 
-Aplicación web en Flask que convierte libros en formatos **TXT** o **DOCX** a archivos de audio **MP3** por capítulo usando voces de **Microsoft Edge TTS**. La interfaz permite ajustar idioma, género, velocidad, pitch, número de líneas por bloque, pausa entre bloques y carpeta de salida.
+Aplicación web en Flask que convierte libros en formatos **TXT** o **DOCX** a archivos de audio **MP3** por capítulo usando voces de **Microsoft Edge TTS**. La interfaz moderna permite ajustar idioma, género, velocidad, *pitch*, número de líneas por bloque, pausa entre bloques, carpeta de salida y nombre base del archivo resultante.
 
 ## Requisitos
 - Python 3.10+
@@ -43,5 +43,6 @@ En la web puedes:
 - Elegir idioma, género y velocidad.
 - Ajustar *pitch*, líneas por bloque y pausa entre bloques.
 - Seleccionar la carpeta de salida.
+- Definir el nombre base del archivo MP3.
 
 Se generará un MP3 por capítulo en la carpeta indicada. Los capítulos se detectan mediante encabezados como "Capítulo X" o "Chapter X". Cada capítulo se procesa en bloques con una pausa (`REQUEST_PAUSE`) entre peticiones para evitar saturar el servicio y se muestra una barra de progreso basada en el tamaño del archivo.
