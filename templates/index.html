@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+<<<<<<< HEAD
   <div class="card">
     <h1>Conversor TTS</h1>
     <form id="convert-form" enctype="multipart/form-data">
@@ -52,6 +53,37 @@
     <div id="progress-container" class="hidden">
       <div id="progress-bar"></div>
     </div>
+=======
+  <h1>Conversor TTS</h1>
+  <form id="convert-form" enctype="multipart/form-data">
+    <input type="file" name="archivo" required><br>
+    <label>Idioma:</label>
+    <select name="idioma">
+      <option value="castellano">Castellano</option>
+      <option value="catalan">Catalán</option>
+    </select><br>
+    <label>Género:</label>
+    <select name="genero">
+      <option value="femenina">Femenina</option>
+      <option value="masculina">Masculina</option>
+    </select><br>
+    <label>Velocidad:</label>
+    <select name="velocidad">
+      <option value="lenta">Lenta</option>
+      <option value="normal" selected>Normal</option>
+      <option value="rapida">Rápida</option>
+    </select><br>
+    <label>Líneas por bloque:</label>
+    <input type="number" name="lineas" value="200" min="1"><br>
+    <label>Pausa entre bloques (s):</label>
+    <input type="number" step="0.1" name="pausa" value="1"><br>
+    <label>Carpeta de salida:</label>
+    <input type="text" name="carpeta" placeholder="salida"><br>
+    <button type="submit">Convertir</button>
+  </form>
+  <div id="progress-container" class="hidden">
+    <div id="progress-bar"></div>
+>>>>>>> origin/main
   </div>
   <script>
   const form = document.getElementById('convert-form');

@@ -75,7 +75,10 @@ def convert():
             book_name,
             chunk_lines=lineas,
             chunk_delay=pausa,
+<<<<<<< HEAD
             pitch=pitch,
+=======
+>>>>>>> origin/main
         )
     )
     loop.close()

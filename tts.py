@@ -10,8 +10,12 @@ import textract
 
 
 DEFAULT_CHUNK_LINES = 200
+<<<<<<< HEAD
 # Pausa por defecto entre peticiones para no saturar los servidores
 DEFAULT_CHUNK_DELAY = float(os.getenv("REQUEST_PAUSE", "1"))
+=======
+DEFAULT_CHUNK_DELAY = 1
+>>>>>>> origin/main
 
 
 def read_txt(path: str) -> str:
@@ -50,7 +54,10 @@ async def synthesize(
     output_path: str,
     chunk_lines: int = DEFAULT_CHUNK_LINES,
     chunk_delay: float = DEFAULT_CHUNK_DELAY,
+<<<<<<< HEAD
     pitch: str = "0%",
+=======
+>>>>>>> origin/main
 ) -> None:
     lines = text.splitlines()
     chunks = [
@@ -79,7 +86,10 @@ async def synthesize_book(
     book_name: str,
     chunk_lines: int = DEFAULT_CHUNK_LINES,
     chunk_delay: float = DEFAULT_CHUNK_DELAY,
+<<<<<<< HEAD
     pitch: str = "0%",
+=======
+>>>>>>> origin/main
 ) -> List[str]:
     os.makedirs(out_dir, exist_ok=True)
     chapters = split_into_chapters(text)
@@ -93,7 +103,10 @@ async def synthesize_book(
             filename,
             chunk_lines=chunk_lines,
             chunk_delay=chunk_delay,
+<<<<<<< HEAD
             pitch=pitch,
+=======
+>>>>>>> origin/main
         )
         files.append(filename)
     return files
