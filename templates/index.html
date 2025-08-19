@@ -6,38 +6,70 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1>Conversor TTS</h1>
-  <form id="convert-form" enctype="multipart/form-data">
-    <input type="file" name="archivo" required><br>
-    <label>Idioma:</label>
-    <select name="idioma">
-      <option value="castellano">Castellano</option>
-      <option value="catalan">Catalán</option>
-    </select><br>
-    <label>Género:</label>
-    <select name="genero">
-      <option value="femenina">Femenina</option>
-      <option value="masculina">Masculina</option>
-    </select><br>
-    <label>Velocidad:</label>
-    <select name="velocidad">
-      <option value="lenta">Lenta</option>
-      <option value="normal" selected>Normal</option>
-      <option value="rapida">Rápida</option>
-    </select><br>
-    <label>Carpeta de salida:</label>
-    <input type="text" name="carpeta" placeholder="salida"><br>
-    <button type="submit">Convertir</button>
-  </form>
-  <div id="progress-container" class="hidden">
-    <div id="progress-bar"></div>
+  <div class="main">
+    <div class="card">
+    <h1>Conversor TTS</h1>
+      <form id="convert-form" enctype="multipart/form-data">
+      <label>Archivo:
+        <input type="file" name="archivo" id="archivo" required>
+      </label>
+      <label>Nombre base de salida:
+        <input type="text" name="nombre" id="nombre" placeholder="MiAudiolibro">
+      </label>
+      <label>Idioma:
+        <select name="idioma">
+          <option value="castellano">Castellano</option>
+          <option value="catalan">Catalán</option>
+        </select>
+      </label>
+      <label>Género:
+        <select name="genero">
+          <option value="femenina">Femenina</option>
+          <option value="masculina">Masculina</option>
+        </select>
+      </label>
+      <label>Velocidad:
+        <select name="velocidad">
+          <option value="lenta">Lenta</option>
+          <option value="normal" selected>Normal</option>
+          <option value="rapida">Rápida</option>
+        </select>
+      </label>
+      <label>Pitch (Hz):
+        <input type="range" name="pitch" id="pitch" min="-20" max="20" value="0">
+        <span id="pitch-val">0</span>
+      </label>
+      <label>Líneas por bloque:
+        <input type="number" name="lineas" value="200" min="1">
+      </label>
+        <label>Pausa entre bloques (s):
+          <input type="number" step="0.1" name="pausa" value="1">
+        </label>
+        <button type="submit" class="btn">Convertir</button>
+      </form>
+      <footer class="version">v{{ version }}</footer>
+      <div id="progress-container" class="hidden">
+        <div id="progress-bar"></div>
+      </div>
+    </div>
+    <div id="log-panel" class="log-panel"></div>
   </div>
   <script>
   const form = document.getElementById('convert-form');
+  const fileInput = document.getElementById('archivo');
+  const nombreInput = document.getElementById('nombre');
+    const pitch = document.getElementById('pitch');
+    const pitchVal = document.getElementById('pitch-val');
+    pitch.addEventListener('input', ()=>{ pitchVal.textContent = pitch.value; });
+  fileInput.addEventListener('change', ()=>{
+    const name = fileInput.files[0]?.name.replace(/\.[^/.]+$/, '') || '';
+    nombreInput.value = name;
+  });
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const data = new FormData(form);
-    const file = form.querySelector('input[type=file]').files[0];
+    const file = fileInput.files[0];
     const est = Math.max(5, file.size / 50000); // segundos estimados
     const bar = document.getElementById('progress-bar');
     const container = document.getElementById('progress-container');
@@ -57,6 +89,15 @@
     document.write(html);
     document.close();
   });
+
+  const logPanel = document.getElementById('log-panel');
+  const evtSource = new EventSource('/logs');
+  evtSource.onmessage = (e) => {
+    const p = document.createElement('p');
+    p.textContent = e.data;
+    logPanel.appendChild(p);
+    logPanel.scrollTop = logPanel.scrollHeight;
+  };
   </script>
 </body>
 </html>
