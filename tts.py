@@ -3,7 +3,7 @@ import os
 import re
 from typing import List, Tuple
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import edge_tts
 from docx import Document
@@ -97,6 +97,7 @@ async def synthesize_book(
     chunk_lines: int = DEFAULT_CHUNK_LINES,
     chunk_delay: float = DEFAULT_CHUNK_DELAY,
     pitch: str = "+0Hz",
+    merge: bool = False,
     log_callback=None,
 ) -> List[str]:
     os.makedirs(out_dir, exist_ok=True)
@@ -131,6 +132,14 @@ async def synthesize_book(
         files.append(filename)
         if log_callback:
             log_callback(f"Capítulo {i} listo")
+    if merge:
+        audio = AudioSegment.empty()
+        for f in files:
+            audio += AudioSegment.from_file(f)
+            os.remove(f)
+        final_file = os.path.join(out_dir, f"{book_name}.mp3")
+        audio.export(final_file, format="mp3")
+        files = [final_file]
     if log_callback:
         log_callback("Conversión finalizada")
     return files

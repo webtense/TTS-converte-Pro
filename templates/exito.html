@@ -10,8 +10,8 @@
     <h1>Conversión finalizada</h1>
     <p>Archivos generados en: <code>{{ destino }}</code></p>
     <ul>
-    {% for archivo in archivos %}
-      <li>{{ archivo }}</li>
+    {% for nombre, ruta in archivos %}
+      <li><a href="{{ url_for('download') }}?path={{ ruta|urlencode }}" target="_blank">{{ nombre }}</a></li>
     {% endfor %}
     </ul>
     <a href="/" class="btn">Volver</a>

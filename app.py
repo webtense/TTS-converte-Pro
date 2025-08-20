@@ -2,7 +2,7 @@ import asyncio
 import os
 from pathlib import Path
 import time
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, abort, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
 from tts import (
@@ -13,7 +13,7 @@ from tts import (
     synthesize_book,
 )
 
-APP_VERSION = "1.5.0"
+APP_VERSION = "1.6.0"
 __version__ = APP_VERSION
 app = Flask(__name__)
 
@@ -54,6 +54,7 @@ def convert():
     pitch = f"{pitch_val:+d}Hz"
     lineas = request.form.get("lineas", type=int) or DEFAULT_CHUNK_LINES
     pausa = request.form.get("pausa", type=float) or DEFAULT_CHUNK_DELAY
+    unir = request.form.get("unir") == "on"
     nombre = request.form.get("nombre") or Path(file.filename).stem
     book_name = secure_filename(nombre)
     filename = secure_filename(file.filename)
@@ -86,12 +87,13 @@ def convert():
             chunk_lines=lineas,
             chunk_delay=pausa,
             pitch=pitch,
+            merge=unir,
             log_callback=add_log,
         )
     )
     loop.close()
 
-    display_files = [os.path.basename(f) for f in files]
+    display_files = [(os.path.basename(f), f) for f in files]
     return render_template(
         "exito.html",
         archivos=display_files,
@@ -111,6 +113,14 @@ def logs():
                 yield f"data: {data}\n\n"
             time.sleep(0.5)
     return Response(stream(), mimetype="text/event-stream")
+
+
+@app.route("/download")
+def download():
+    path = request.args.get("path")
+    if not path or not os.path.exists(path):
+        abort(404)
+    return send_file(path, as_attachment=True)
 
 
 if __name__ == "__main__":

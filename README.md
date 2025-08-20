@@ -1,6 +1,6 @@
 # TTS-converte-Pro
 
-Aplicación web en Flask que convierte libros en formatos **TXT** o **DOCX** a archivos de audio **MP3** por capítulo usando voces de **Microsoft Edge TTS**. La interfaz minimalista (blanco/negro con toques rojos) muestra la versión actual y permite ajustar idioma, género, velocidad, *pitch*, número de líneas por bloque, pausa entre bloques, carpeta de salida y nombre base del archivo. Los MP3 se guardan en la carpeta seleccionada y, durante la conversión, un panel de log muestra el progreso, las cuentas atrás entre bloques y emite un beep al reanudar. Se estima el tiempo total restante y se presenta una cuenta regresiva. Versión actual: **1.5.0**.
+Aplicación web en Flask que convierte libros en formatos **TXT** o **DOCX** a archivos de audio **MP3** usando voces de **Microsoft Edge TTS**. La interfaz minimalista (blanco/negro con toques rojos) muestra la versión actual y permite ajustar idioma, género, velocidad, *pitch*, número de líneas por bloque, pausa entre bloques, carpeta de salida y nombre base del archivo. Puede generarse un MP3 por capítulo o un único archivo con todos los capítulos unidos. Los MP3 se guardan en la carpeta seleccionada y, durante la conversión, un panel de log muestra el progreso, las cuentas atrás entre bloques y emite un beep al reanudar. Se estima el tiempo total restante y se presenta una cuenta regresiva. La página de éxito ofrece enlaces para descargar los archivos resultantes. Versión actual: **1.6.0**.
 
 ## Requisitos
 - Python 3.10+
@@ -42,7 +42,7 @@ Aplicación web en Flask que convierte libros en formatos **TXT** o **DOCX** a a
 En la web puedes:
 - Elegir idioma, género y velocidad.
 - Ajustar *pitch*, líneas por bloque y pausa entre bloques (0 procesa el capítulo completo de una sola vez).
-- Definir la carpeta de salida y el nombre base del archivo MP3.
+- Definir la carpeta de salida, el nombre base del archivo MP3 y si deseas unir todos los capítulos en un único MP3.
 - Consultar la versión actual en la parte inferior de la página.
 
-Se generará un MP3 por capítulo en la carpeta elegida, nombrando los archivos con el nombre del proyecto. Los capítulos se detectan mediante encabezados como "Capítulo X" o "Chapter X". Cada capítulo se procesa en bloques con una pausa (`REQUEST_PAUSE`) entre peticiones para evitar saturar el servicio. Durante la conversión se muestra una barra de progreso, un contador del tiempo estimado restante y, en el panel derecho, un log con el estado de cada capítulo, la cuenta atrás antes de reanudar y un beep al continuar.
+Se generará un MP3 por capítulo o uno único con todos los capítulos (según se seleccione) en la carpeta elegida, nombrando los archivos con el nombre del proyecto. Los capítulos se detectan mediante encabezados como "Capítulo X" o "Chapter X". Cada capítulo se procesa en bloques con una pausa (`REQUEST_PAUSE`) entre peticiones para evitar saturar el servicio. Durante la conversión se muestra una barra de progreso, un contador del tiempo estimado restante y, en el panel derecho, un log con el estado de cada capítulo, la cuenta atrás antes de reanudar y un beep al continuar. Al finalizar, la página muestra enlaces para descargar los MP3 generados.
