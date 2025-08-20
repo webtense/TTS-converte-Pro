@@ -1,17 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
+  background: #fff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.main {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.card {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  border: 1px solid #000;
+  width: 380px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+input[type=file],
+input[type=number],
+input[type=text],
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type=range] {
+  width: 100%;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  background: #e63946;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background: #ddd;
+  height: 4px;
+  border-radius: 4px;
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #e63946;
+  border: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type=range]::-moz-range-track {
+  background: #ddd;
+  height: 4px;
+  border-radius: 4px;
+}
+
+button,
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #e63946;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
   text-align: center;
-  margin: 40px;
+  transition: background 0.2s ease-in-out;
 }
 
-form {
-  margin: 0 auto;
+button:hover,
+.btn:hover {
+  background: #ba1b1d;
+}
+
+
+.log-panel {
   width: 300px;
-}
-
-button {
-  padding: 10px 20px;
-  margin-top: 10px;
+  height: 400px;
+  border: 1px solid #000;
+  border-radius: 12px;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fff;
 }
 
 #progress-container {
@@ -19,14 +116,39 @@ button {
   background: #eee;
   height: 20px;
   margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 #progress-bar {
   height: 100%;
   width: 0;
-  background: #4caf50;
+  background: #e63946;
+  transition: width 0.2s;
+}
+
+#timer {
+  margin-top: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+#choose-dir {
+  margin-top: 5px;
 }
 
 .hidden {
   display: none;
+}
+
+ul {
+  text-align: left;
+  padding-left: 20px;
+}
+
+.version {
+  margin-top: 15px;
+  font-size: 0.8rem;
+  color: #e63946;
+  text-align: center;
 }

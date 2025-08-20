@@ -6,43 +6,112 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1>Conversor TTS</h1>
-  <form id="convert-form" enctype="multipart/form-data">
-    <input type="file" name="archivo" required><br>
-    <label>Idioma:</label>
-    <select name="idioma">
-      <option value="castellano">Castellano</option>
-      <option value="catalan">Catalán</option>
-    </select><br>
-    <label>Género:</label>
-    <select name="genero">
-      <option value="femenina">Femenina</option>
-      <option value="masculina">Masculina</option>
-    </select><br>
-    <label>Velocidad:</label>
-    <select name="velocidad">
-      <option value="lenta">Lenta</option>
-      <option value="normal" selected>Normal</option>
-      <option value="rapida">Rápida</option>
-    </select><br>
-    <label>Carpeta de salida:</label>
-    <input type="text" name="carpeta" placeholder="salida"><br>
-    <button type="submit">Convertir</button>
-  </form>
-  <div id="progress-container" class="hidden">
-    <div id="progress-bar"></div>
+  <div class="main">
+    <div class="card">
+    <h1>Conversor TTS</h1>
+      <form id="convert-form" enctype="multipart/form-data">
+      <label>Archivo:
+        <input type="file" name="archivo" id="archivo" required>
+      </label>
+      <label>Nombre base de salida:
+        <input type="text" name="nombre" id="nombre" placeholder="MiAudiolibro">
+      </label>
+      <label>Carpeta de salida:
+        <input type="text" name="salida" id="salida" placeholder="/ruta/de/salida">
+        <button type="button" id="choose-dir">Elegir…</button>
+        <input type="file" id="dir-picker" webkitdirectory style="display:none">
+      </label>
+      <label>Idioma:
+        <select name="idioma">
+          <option value="castellano">Castellano</option>
+          <option value="catalan">Catalán</option>
+        </select>
+      </label>
+      <label>Género:
+        <select name="genero">
+          <option value="femenina">Femenina</option>
+          <option value="masculina">Masculina</option>
+        </select>
+      </label>
+      <label>Velocidad:
+        <select name="velocidad">
+          <option value="lenta">Lenta</option>
+          <option value="normal" selected>Normal</option>
+          <option value="rapida">Rápida</option>
+        </select>
+      </label>
+      <label>Pitch (Hz):
+        <input type="range" name="pitch" id="pitch" min="-20" max="20" value="0">
+        <span id="pitch-val">0</span>
+      </label>
+      <label>Líneas por bloque:
+        <input type="number" name="lineas" value="200" min="1" id="lineas">
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="sin-bloques"> Procesar capítulo completo
+      </label>
+        <label>Pausa entre bloques (s):
+          <input type="number" step="0.1" name="pausa" value="1">
+        </label>
+        <button type="submit" class="btn">Convertir</button>
+      </form>
+      <footer class="version">v{{ version }}</footer>
+      <div id="progress-container" class="hidden">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="timer" class="hidden"></div>
+    </div>
+    <div id="log-panel" class="log-panel"></div>
   </div>
   <script>
   const form = document.getElementById('convert-form');
+  const fileInput = document.getElementById('archivo');
+  const nombreInput = document.getElementById('nombre');
+    const pitch = document.getElementById('pitch');
+    const pitchVal = document.getElementById('pitch-val');
+    pitch.addEventListener('input', ()=>{ pitchVal.textContent = pitch.value; });
+  const lineasInput = document.getElementById('lineas');
+  const sinBloques = document.getElementById('sin-bloques');
+  const dirPicker = document.getElementById('dir-picker');
+  const chooseDir = document.getElementById('choose-dir');
+  const salidaInput = document.getElementById('salida');
+
+  chooseDir.addEventListener('click', () => dirPicker.click());
+  dirPicker.addEventListener('change', () => {
+    const file = dirPicker.files[0];
+    if(file){
+      const full = file.path || file.webkitRelativePath;
+      const dir = full.replace(/[^\\\/]*$/, '');
+      salidaInput.value = dir;
+    }
+  });
+  sinBloques.addEventListener('change', ()=>{
+    lineasInput.disabled = sinBloques.checked;
+    if(sinBloques.checked){ lineasInput.value = 0; }
+  });
+  fileInput.addEventListener('change', ()=>{
+    const name = fileInput.files[0]?.name.replace(/\.[^/.]+$/, '') || '';
+    nombreInput.value = name;
+  });
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const data = new FormData(form);
-    const file = form.querySelector('input[type=file]').files[0];
+    const file = fileInput.files[0];
     const est = Math.max(5, file.size / 50000); // segundos estimados
     const bar = document.getElementById('progress-bar');
     const container = document.getElementById('progress-container');
+    const timerEl = document.getElementById('timer');
     container.classList.remove('hidden');
+    timerEl.classList.remove('hidden');
     let start = Date.now();
+    let remaining = est;
+    timerEl.textContent = `Tiempo restante: ${Math.ceil(remaining)}s`;
+    const interval = setInterval(()=>{
+      remaining -= 1;
+      timerEl.textContent = `Tiempo restante: ${Math.max(0, Math.ceil(remaining))}s`;
+      if(remaining <= 0) clearInterval(interval);
+    },1000);
     const duration = est * 1000;
     function animate(){
       const now = Date.now();
@@ -57,6 +126,26 @@
     document.write(html);
     document.close();
   });
+
+  const logPanel = document.getElementById('log-panel');
+  const evtSource = new EventSource('/logs');
+  function beep(){
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 1000;
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.2);
+  }
+
+  evtSource.onmessage = (e) => {
+    if(e.data === 'BEEP'){ beep(); return; }
+    const p = document.createElement('p');
+    p.textContent = e.data;
+    logPanel.appendChild(p);
+    logPanel.scrollTop = logPanel.scrollHeight;
+  };
   </script>
 </body>
 </html>
