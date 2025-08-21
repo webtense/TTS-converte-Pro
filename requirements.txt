@@ -1,0 +1,6 @@
+Flask>=3.1
+python-docx>=1.1
+edge-tts>=7.0
+pydub>=0.25.1
+# Para Python 3.13+ (repone el módulo audioop retirado del core)
+audioop-lts>=0.2.1

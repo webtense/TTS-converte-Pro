@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TTS-converte-Pro</title>
+  <style>
+    :root{--bg:#0f1115;--panel:#161a21;--fg:#e6e6e6;--muted:#9aa4b2;--accent:#e63946;--accent-2:#ef4b59;--border:#242b36;}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(15,17,21,.85);backdrop-filter:blur(6px)}
+    main{max-width:1100px;margin:32px auto;padding:0 16px;display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    @media (max-width:960px){main{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .card .head{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600}
+    .card .body{padding:16px}
+    label{display:block;margin:12px 0 6px;font-weight:600;font-size:13px}
+    input[type="text"],input[type="number"],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0c0f14;color:var(--fg);outline:none}
+    input[type="file"]{width:100%} small{color:var(--muted)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .actions{display:flex;gap:10px;margin-top:16px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:11px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+    button:hover{background:var(--accent-2)}
+    .btn-secondary{background:#232a36;border:1px solid var(--border)}
+    .btn-secondary:hover{background:#2a3241}
+    .log{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.35;height:380px;overflow:auto;background:#0b0e13;border:1px solid var(--border);border-radius:10px;padding:12px;white-space:pre-wrap}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<header>
+  <h1>TTS-converte-Pro</h1>
+  <div>Versión {{ version }}</div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="head">Conversión</div>
+    <div class="body">
+      <form action="/convert" method="post" enctype="multipart/form-data" onsubmit="return beforeSubmit()">
+        <label>Archivo (TXT o DOCX)</label>
+        <input type="file" name="archivo" accept=".txt,.docx" required>
+
+        <label>Carpeta de salida</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" name="salida" id="salida" placeholder="{{ base_output }}" style="flex:1" />
+          <button type="button" class="btn-secondary" onclick="setSalida('{{ home_dir }}')">HOME</button>
+          <button type="button" class="btn-secondary" onclick="setSalida('{{ base_output }}')">DEFECTO</button>
+        </div>
+        <small>Vacío → <code>{{ base_output }}</code>/<em>nombre_proyecto</em></small>
+
+        <label>Nombre del proyecto</label>
+        <input type="text" name="nombre" placeholder="Mi_Audio" />
+
+        <div class="row">
+          <div>
+            <label>Idioma</label>
+            <select name="idioma">
+              <option value="castellano" selected>Castellano</option>
+              <option value="catalan">Catalán</option>
+            </select>
+          </div>
+          <div>
+            <label>Género</label>
+            <select name="genero">
+              <option value="femenina" selected>Femenina</option>
+              <option value="masculina">Masculina</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Velocidad</label>
+            <select name="velocidad">
+              <option value="lenta">Lenta</option>
+              <option value="normal" selected>Normal</option>
+              <option value="rapida">Rápida</option>
+            </select>
+          </div>
+          <div>
+            <label>Pitch (Hz)</label>
+            <input type="number" name="pitch" value="0">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Líneas por bloque (0 = capítulo completo)</label>
+            <input type="number" name="lineas" min="0" value="0">
+          </div>
+          <div>
+            <label>Pausa entre bloques (seg.)</label>
+            <input type="number" name="pausa" step="0.1" value="0.5">
+          </div>
+        </div>
+
+        <label><input type="checkbox" name="unir"> Unir todos los capítulos en un MP3</label>
+
+        <div class="actions">
+          <button type="submit">Convertir</button>
+          <button type="button" class="btn-secondary" onclick="document.querySelector('form').reset();clearLog()">Limpiar</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="head">Progreso y registro</div>
+    <div class="body">
+      <div id="status" class="muted" style="margin-bottom:8px">Esperando…</div>
+      <div id="log" class="log"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn-secondary" onclick="clearLog()">Limpiar log</button>
+        <button class="btn-secondary" onclick="copyLog()">Copiar log</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  function setSalida(p){ document.getElementById('salida').value=p; }
+  function clearLog(){ document.getElementById('log').textContent=''; }
+  function copyLog(){ navigator.clipboard.writeText(document.getElementById('log').textContent||''); }
+  function beforeSubmit(){ document.getElementById('status').textContent='Enviando…'; return true; }
+
+  // SSE live log
+  (function(){
+    const logEl=document.getElementById('log'), st=document.getElementById('status');
+    try{
+      const ev=new EventSource('/logs');
+      ev.onmessage=(e)=>{ if(!e||!e.data) return; st.textContent='Procesando…'; logEl.textContent+=e.data+'\n'; logEl.scrollTop=logEl.scrollHeight; };
+      ev.onerror=()=>{ if(st.textContent!=='Procesando…'){ st.textContent='Conexión de log en espera…'; } };
+    }catch(err){ console.error(err); }
+  })();
+</script>
+</body>
+</html>

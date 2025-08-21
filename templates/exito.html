@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Resultado</title>
+<body style="font-family:system-ui;max-width:800px;margin:40px auto;padding:0 16px">
+  <h2>Conversión finalizada</h2>
+  <p>Destino: <code>{{ destino }}</code></p>
+  <ul>
+    {% for name, path in archivos %}
+      <li><a href="/download?path={{ path|urlencode }}">{{ name }}</a></li>
+    {% endfor %}
+  </ul>
+  <p><a href="/">← Volver</a></p>
+  <small>Versión {{ version }}</small>
+</body>
+</html>
