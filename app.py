@@ -15,7 +15,15 @@ from tts import (
 
 APP_VERSION = "1.6.0"
 __version__ = APP_VERSION
-app = Flask(__name__)
+
+# Explicitly configure template and static directories to avoid
+# TemplateNotFound errors when the app is launched from a different
+# working directory.
+app = Flask(
+    __name__,
+    template_folder="templates",
+    static_folder="static",
+)
 
 VOICE_MAP = {
     "castellano": {
