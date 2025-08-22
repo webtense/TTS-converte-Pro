@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<title>Resultado</title>
+<body style="font-family:system-ui;max-width:800px;margin:40px auto;padding:0 16px">
+  <h2>Conversión finalizada ✅</h2>
+  <p>Destino: <code>{{ destino }}</code></p>
+
+  <ul>
+    {% for f in archivos %}
+      <li style="margin-bottom:14px">
+        <strong>{{ f.name }}</strong><br>
+        <audio controls style="width:100%;margin:6px 0"
+               src="/download?path={{ f.path|urlencode }}"></audio><br>
+        <a href="/download?path={{ f.path|urlencode }}" download>⬇️ Descargar</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p><a href="/">← Volver</a></p>
+  <small>Versión {{ version }}</small>
+
+<script>
+  // Beep largo (~2s) con WebAudio al cargar la página
+  (function(){
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 800; // Hz
+      gain.gain.value = 0.1;     // volumen bajo
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      setTimeout(()=>{ try{osc.stop();ctx.close()}catch(e){} }, 2000);
+    } catch (e) { /* sin beep si no hay WebAudio */ }
+  })();
+</script>
+</body>
+</html>
