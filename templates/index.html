@@ -14,16 +14,17 @@
     .card .head{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600}
     .card .body{padding:16px}
     label{display:block;margin:12px 0 6px;font-weight:600;font-size:13px}
-    input[type="text"],input[type="number"],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0c0f14;color:var(--fg);outline:none}
+    input[type="text"],input[type="number"],select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0c0f14;color:var(--fg);outline:none}
     input[type="file"]{width:100%} small{color:var(--muted)}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .actions{display:flex;gap:10px;margin-top:16px}
+    .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
     button{appearance:none;border:none;background:var(--accent);color:#fff;padding:11px 14px;border-radius:12px;font-weight:700;cursor:pointer}
     button:hover{background:var(--accent-2)}
     .btn-secondary{background:#232a36;border:1px solid var(--border)}
     .btn-secondary:hover{background:#2a3241}
     .log{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.35;height:380px;overflow:auto;background:#0b0e13;border:1px solid var(--border);border-radius:10px;padding:12px;white-space:pre-wrap}
     .muted{color:var(--muted)}
+    .preview-wrap{margin-top:10px;border:1px dashed var(--border);border-radius:10px;padding:10px}
   </style>
 </head>
 <body>
@@ -36,7 +37,7 @@
   <section class="card">
     <div class="head">Conversión</div>
     <div class="body">
-      <form action="/convert" method="post" enctype="multipart/form-data" onsubmit="return beforeSubmit()">
+      <form id="form-convert" action="/convert" method="post" enctype="multipart/form-data" onsubmit="return beforeSubmit()">
         <label>Archivo (TXT o DOCX)</label>
         <input type="file" name="archivo" accept=".txt,.docx" required>
 
@@ -54,14 +55,14 @@
         <div class="row">
           <div>
             <label>Idioma</label>
-            <select name="idioma">
+            <select name="idioma" id="idioma">
               <option value="castellano" selected>Castellano</option>
               <option value="catalan">Catalán</option>
             </select>
           </div>
           <div>
             <label>Género</label>
-            <select name="genero">
+            <select name="genero" id="genero">
               <option value="femenina" selected>Femenina</option>
               <option value="masculina">Masculina</option>
             </select>
@@ -71,7 +72,7 @@
         <div class="row">
           <div>
             <label>Velocidad</label>
-            <select name="velocidad">
+            <select name="velocidad" id="velocidad">
               <option value="lenta">Lenta</option>
               <option value="normal" selected>Normal</option>
               <option value="rapida">Rápida</option>
@@ -79,7 +80,7 @@
           </div>
           <div>
             <label>Pitch (Hz)</label>
-            <input type="number" name="pitch" value="0">
+            <input type="number" name="pitch" id="pitch" value="0">
           </div>
         </div>
 
@@ -101,6 +102,17 @@
           <button type="button" class="btn-secondary" onclick="document.querySelector('form').reset();clearLog()">Limpiar</button>
         </div>
       </form>
+
+      <!-- PRUEBA DE VOZ -->
+      <div class="preview-wrap">
+        <label>Texto de prueba (opcional)</label>
+        <textarea id="texto_prueba" rows="3" placeholder="Escribe un texto corto para probar esta voz..."></textarea>
+        <div class="actions">
+          <button type="button" onclick="probarVoz()">🎧 Probar voz</button>
+          <a id="preview_download" class="btn-secondary" href="#" download style="display:none;">Descargar prueba</a>
+        </div>
+        <audio id="preview_audio" controls style="margin-top:8px; width:100%; display:none;"></audio>
+      </div>
     </div>
   </section>
 
@@ -132,6 +144,34 @@
       ev.onerror=()=>{ if(st.textContent!=='Procesando…'){ st.textContent='Conexión de log en espera…'; } };
     }catch(err){ console.error(err); }
   })();
+
+  async function probarVoz(){
+    const form = document.getElementById('form-convert');
+    const data = new FormData();
+    data.append('idioma', form.idioma.value);
+    data.append('genero', form.genero.value);
+    data.append('velocidad', form.velocidad.value);
+    data.append('pitch', form.pitch.value || 0);
+    data.append('texto_prueba', document.getElementById('texto_prueba').value || '');
+
+    const btns = document.querySelectorAll('.preview-wrap button');
+    btns.forEach(b => b.disabled = true);
+
+    try{
+      const res = await fetch('/preview', { method:'POST', body:data });
+      const j = await res.json();
+      if(!j.ok) throw new Error(j.error || 'Error en la prueba');
+      const audio = document.getElementById('preview_audio');
+      const link = document.getElementById('preview_download');
+      audio.src = j.url; audio.style.display='block'; audio.play();
+      link.href = j.url; link.style.display='inline-block';
+      link.download = j.name || 'preview.mp3';
+    }catch(e){
+      alert('No se pudo generar la prueba: ' + e.message);
+    }finally{
+      btns.forEach(b => b.disabled = false);
+    }
+  }
 </script>
 </body>
 </html>
